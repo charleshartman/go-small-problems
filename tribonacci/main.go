@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func Tribonacci(signature [3]float64, n int) []float64 {
-	seq := []float64{signature[0], signature[1], signature[2]}
+	seq := signature[:]
 
 	for len(seq) < n {
 		length := len(seq)
