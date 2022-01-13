@@ -19,20 +19,19 @@ func BinarySearch(sl []int, n int) (int, error) {
 		return -1, errors.New("Argument is not sorted, BinarySearch only works for sorted datasets, exiting...")
 	}
 
-	lowerBound := 0
-	upperBound := len(sl) - 1
+	left := 0
+	right := len(sl) - 1
 
-	for lowerBound <= upperBound {
-		midpoint := (upperBound + lowerBound) / 2
+	for left <= right {
+		mid := left + ((right - left) / 2)
+		midVal := sl[mid]
 
-		valueAtMidpoint := sl[midpoint]
-
-		if n == valueAtMidpoint {
-			return midpoint, nil
-		} else if n < valueAtMidpoint {
-			upperBound = midpoint - 1
-		} else if n > valueAtMidpoint {
-			lowerBound = midpoint + 1
+		if n == midVal {
+			return mid, nil
+		} else if n < midVal {
+			right = mid - 1
+		} else if n > midVal {
+			left = mid + 1
 		}
 	}
 
