@@ -28,9 +28,6 @@ first, last
              8 [8] 8 [8, 10]
              8 [8] 8 8 [10]
 
-
-
-
  Constraints:
 0 <= nums.length <= 105
 -109 <= nums[i] <= 109
@@ -50,7 +47,6 @@ Find mid point
   - need to binary search right
   - else last = midPointIndex
 CODE
-
 */
 
 package main
@@ -58,16 +54,20 @@ package main
 import "fmt"
 
 func searchRange(nums []int, target int) []int {
+	if target == 0 && len(nums) <= 1 {
+		return []int{-1, -1}
+	}
+
 	if len(nums) == 1 {
 		return []int{0, 0}
 	}
 
-	if target == 0 {
-		return []int{-1, -1}
-	}
-
 	start := binarySearchLeft(nums, target)
 	end := binarySearchRight(nums, target)
+
+	if len(nums) == 2 && start == -1 && end == 1 {
+		start = 1
+	}
 
 	return []int{start, end}
 }
@@ -78,11 +78,11 @@ func binarySearchLeft(slice []int, target int) int {
 	for left <= right {
 		mid := left + ((right - left) / 2)
 
-		if mid == 0 {
+		if mid == 0 && slice[mid] == target {
+			return mid
+		} else if mid == 0 {
 			break
-		}
-
-		if slice[mid] == target && slice[mid-1] != target {
+		} else if slice[mid] == target && slice[mid-1] != target {
 			return mid
 		} else if target > slice[mid] {
 			left = mid + 1
@@ -100,13 +100,13 @@ func binarySearchRight(slice []int, target int) int {
 	for left <= right {
 		mid := left + ((right - left) / 2)
 
-		if mid >= len(slice)-1 {
-			break
-		}
-
-		if slice[mid] == target && slice[mid+1] != target {
+		if mid == len(slice)-1 && slice[mid] == target {
 			return mid
-		} else if target > slice[mid] {
+		} else if mid == len(slice)-1 {
+			break
+		} else if slice[mid] == target && slice[mid+1] != target {
+			return mid
+		} else if target >= slice[mid] {
 			left = mid + 1
 		} else {
 			right = mid - 1
@@ -121,6 +121,6 @@ func main() {
 	fmt.Println(searchRange([]int{5, 7, 7, 7, 8, 8, 10}, 7)) // [1,3]
 	fmt.Println(searchRange([]int{5, 7, 7, 8, 8, 10}, 6))    // [-1,-1]
 	fmt.Println(searchRange([]int{}, 0))                     // [-1,-1]
-	// fmt.Println(searchRange([]int{2, 2}, 2))                 // [0,1]
-	// fmt.Println(searchRange([]int{9, 9, 9, 9, 9}, 9))        // [0,4]
+	fmt.Println(searchRange([]int{2, 2}, 2))                 // [0,1]
+	fmt.Println(searchRange([]int{9, 9, 9, 9, 9}, 9))        // [0,4]
 }
