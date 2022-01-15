@@ -123,4 +123,5 @@ func main() {
 	fmt.Println(searchRange([]int{}, 0))                     // [-1,-1]
 	fmt.Println(searchRange([]int{2, 2}, 2))                 // [0,1]
 	fmt.Println(searchRange([]int{9, 9, 9, 9, 9}, 9))        // [0,4]
+	fmt.Println(searchRange([]int{5, 7, 7, 8, 8, 10}, 5))    // [0, 0]
 }
