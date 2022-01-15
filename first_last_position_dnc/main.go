@@ -135,6 +135,10 @@ func leftSearch(nums []int, target, leftP, rightP int) int {
 		returnLeft = leftP
 	}
 
+	if leftP+1 == rightP && nums[rightP] == target && nums[leftP] != target {
+		return returnLeft + 1
+	}
+
 	if leftP+1 == rightP {
 		return returnLeft
 	}
@@ -160,6 +164,10 @@ func rightSearch(nums []int, target, leftP, rightP int) int {
 		returnRight = rightP
 	}
 
+	if rightP-1 == leftP && nums[leftP] == target && nums[rightP] != target {
+		return returnRight + 1
+	}
+
 	if rightP-1 == leftP {
 		return returnRight
 	}
@@ -183,6 +191,7 @@ func main() {
 	fmt.Println(searchRange([]int{8, 8}, 8))              // [0, 1]
 	fmt.Println(searchRange([]int{}, 0))                  // [-1, -1]
 	fmt.Println(searchRange([]int{5, 7, 7, 8, 8, 10}, 5)) // [0, 0]
+	// fmt.Println(searchRange([]int{1}, 0))                 // [0, 0]
 }
 
 /*
