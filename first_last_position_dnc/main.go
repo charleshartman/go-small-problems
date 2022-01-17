@@ -1,114 +1,93 @@
 /* 34. Find First and Last Position of Element in Sorted Array
 
-Given an array of integers nums sorted in non-decreasing order, find the
-starting and ending position of a given target value.
+UNDERSTAND THE PROBLEM
+  Inputs
+    - slice of ints, target integer
+  Outputs
+    - slice of two integers, representing the start and end indexes of the target integer within the input slice
 
-If target is not found in the array, return [-1, -1].
+Rules/Implicit Requirements
+  Explicit
+    - nums is a non-decreasing array
+    - return a slice of [-1, -1] if the target is not found
+    - 0 <= nums.length <= 105
+    - -109 <= nums[i] <= 109
+    - -109 <= target <= 109
+  Implicit
+    - an empty slice returns a slice of [-1, -1] irrespective of the target
+    - if the target element appears only once, the same index should be returned as both start and end indexes
 
-You must write an algorithm with O(log n) runtime complexity.
+Mental Model (optional)
+  - main function calls two helper functions that are invoked recursively, bubbling up index values that main function returns as result (two element), helper functions receive entire input slice, pointers for index values adjust with each recursive call to find left most and right most target value depending on which helper function we are utilizing
+    - helper function i/o
+      - input: slice of ints, target integer, left pointer integer, right pointer integer
+      - output: single integer (each), left and right index
 
+  - Each recursive call adjusts the left and right pointers based on the following conditions:
+    - To find the leftmost target: if you find the target or find an element *greater than* the target, move to the left. Otherwise move to the right.
+    - To find the rightmost target: if you find the target or find an element *less than* or equal to the target, move to the right. Otherwise move to the left.
+    - Base Case: If the left pointer is greater or equal to the right pointer
+      - If the value at the left pointer is equal to the target, return the pointer
+      - Else, the value is not present in the slice
 
-Example 1:
-Input: nums = [5,7,7,8,8,10], target = 8
-Output: [3,4]
+EXAMPLES/TEST CASES
+  Expected Cases
+  - nums = []int{5,7,7,8,8,10}
+  - target = 8
+  - return value = []int{3, 4}
 
-Example 2:
-Input: nums = [5,7,7,8,8,10], target = 6
-Output: [-1,-1]
+  - nums = []int{5,7,7,8,8,10}
+  - target = 6
+  - return value = []int{-1, -1}
 
-Example 3:
-Input: nums = [], target = 0
-Output: [-1,-1]
+  - nums = []int{8,8}
+  - target = 8
+  - return value = []int{0, 1}
 
-Constraints:
-0 <= nums.length <= 105
--109 <= nums[i] <= 109
-nums is a non-decreasing array.
--109 <= target <= 109
+  Edge Cases
+  - nums = []int{}
+  - target = 0
+  - return value = []int{-1, -1}
 
-Example Breakdown
-        F F F T T F        midpoint = len / 2 = index 2
-       [5,7,7,8,8,10] --> (3 , 4)
-  [5,7,7]-->(-1, -1)       [8,8,10] --> (0, 1)
-[5]-->(-1, -1) [7, 7]-->(-1, -1)     [8]-->(0, 0) [8, 10] --> (0, 0)
-      [7]-->(-1, -1) [7] -->(-1, -1)        [8]--> (0, 0) [10] -->(-1,-1)
+  - nums = []int{8}
+  - target = 8
+  - return value = []int{0, 0}
 
-            0   1  2   3  midpoint = 1
-            [1, 8, 8, 10]
+ALGORITHM
+  - guard clause for input slices of length 0
+    - return a slice of [-1, -1]
 
-         0  1        2   3
-         0  1        0   1
-        [1, 8]      [8, 10]
+    - helper function (findStart)
+      - find the index of the leftmost target
+        - pass in starting and ending indexes for left and right pointers
+        - base case: if the left pointer and right pointer meet/cross
+          - evaluate whether the value at the left pointer == target
+            - if it is, we've found the leftmost target => return the leftP
+            - if it isn't, the target doesn't exist => return -1
+        - calculate the midpoint based on the current values of the left and right pointers
+        - if the value at the midpoint is less than the target
+          - move the left pointer to the midpoint + 1
+        - else (midpoint is >= target)
+          - move the right pointer to the midpoint
+        - call the helper function again with the new left and right pointers
 
-        0     1    2      3
-        0     0    0      0
-      [1]    [8]  [8]    [10]       ---> Base Case
+    - helper function (findEnd)
+      - find the index of the rightmost target
+      - pass in starting and ending indexes for left and right pointers
+        - base case: if the left pointer and right pointer meet/cross
+          - evaluate whether the value at the left pointer == target
+            - if it is, we've found the rightmost target => return the leftP
+            - if it isn't, the target doesn't exist => return -1
+        - calculate the midpoint based on the current values of the left and right pointers
+        - if the value at the midpoint is greater than the target
+          - move the right pointer to the midpoint - 1
+        - else (midpoint is <= target)
+          - move the left pointer to the midpoint
+        - call the helper function again with the new left and right pointers
 
+  - return the indexes of the leftmost and rightmost target in a slice
 
-slice = [8, 10] = length of 2
-someFunc([8, 10]) = 0, 0
-return 2, 2
-
-
-func searchRange(nums []int, target int) []int {
-    if len(nums) == 0 {
-        return []int{-1, -1}
-    }
-    return []int{binaryLeft(nums, target), binaryRight(nums, target)}
-}
-
-func binaryLeft(nums []int, target int) int {
-    left, right := 0, len(nums)-1
-
-    for left < right {
-        mid := (right + left)/2
-        if nums[mid] < target {
-            left = mid + 1
-        } else {
-            right = mid
-        }
-    }
-    if nums[left] == target {
-        return left
-    }
-    return -1
-}
-
-func binaryRight(nums []int, target int) int {
-    left, right := 0, len(nums)-1
-
-    for left < right {
-        mid := (right + left)/2 + 1
-        if nums[mid] > target {
-            right = mid - 1
-        } else if nums[mid] <= target {
-            left = mid
-        }
-    }
-    if nums[left] == target {
-        return left
-    }
-    return -1
-}
-
-- To find the leftmost target: if you find the target or find an element *greater than* the target, move to the left (i.e., right pointer = midpoint - 1)
-- To find the rightmost target: if you find the target or find an element *less than* or equal to the target, move to the right (i.e., left pointer = midpoint + 1)
-
-func dncProblem(list []int) []int {
-  _// base cases; very different for every problem_
-
-  _// divide_
-  left := leftHalf(list)
-  right := rightHalf(list)
-
-  _// conquer (recurse)_
-  leftResult := dncProblem(left)
-  rightResult := dncProblem(right)
-
-  _// combine; very different for every problem_
-  return combine(leftResult, rightResult)
-}
-
+CODE
 */
 
 package main
@@ -120,69 +99,50 @@ func searchRange(nums []int, target int) []int {
 		return []int{-1, -1}
 	}
 
-	leftIndex := leftSearch(nums, target, 0, len(nums)-1)
-	rightIndex := rightSearch(nums, target, 0, len(nums)-1)
+	start := findStart(nums, target, 0, len(nums)-1)
+	end := findEnd(nums, target, 0, len(nums)-1)
 
-	return []int{leftIndex, rightIndex}
+	return []int{start, end}
 }
 
-func leftSearch(nums []int, target, leftP, rightP int) int {
-	mid := leftP + ((rightP - leftP) / 2)
-
-	returnLeft := -1
-
-	if nums[leftP] == target {
-		returnLeft = leftP
+func findStart(nums []int, target, leftP, rightP int) int {
+	if leftP >= rightP {
+		if nums[leftP] == target {
+			return leftP
+		} else {
+			return -1
+		}
 	}
 
-	if leftP+1 == rightP && nums[rightP] == target && nums[leftP] != target {
-		return returnLeft + 1
-	}
+	midpoint := (leftP + rightP) / 2
 
-	if leftP+1 == rightP {
-		return returnLeft
-	}
-
-	if nums[mid] == target && nums[mid-1] < target {
-		return mid
-	}
-
-	if nums[mid] > target {
-		rightP = mid - 1
+	if nums[midpoint] < target {
+		leftP = midpoint + 1
 	} else {
-		leftP = mid
+		rightP = midpoint
 	}
 
-	return leftSearch(nums, target, leftP, rightP)
+	return findStart(nums, target, leftP, rightP)
 }
 
-func rightSearch(nums []int, target, leftP, rightP int) int {
-	mid := leftP + ((rightP - leftP) / 2)
-	returnRight := -1
-
-	if nums[rightP] == target {
-		returnRight = rightP
+func findEnd(nums []int, target, leftP, rightP int) int {
+	if leftP >= rightP {
+		if nums[leftP] == target {
+			return leftP
+		} else {
+			return -1
+		}
 	}
 
-	if rightP-1 == leftP && nums[leftP] == target && nums[rightP] != target {
-		return returnRight + 1
-	}
+	midpoint := (leftP+rightP)/2 + 1
 
-	if rightP-1 == leftP {
-		return returnRight
-	}
-
-	if nums[mid] == target && nums[mid+1] > target {
-		return mid
-	}
-
-	if nums[mid] < target {
-		leftP = mid + 1
+	if nums[midpoint] > target {
+		rightP = midpoint - 1
 	} else {
-		rightP = mid
+		leftP = midpoint
 	}
 
-	return rightSearch(nums, target, leftP, rightP)
+	return findEnd(nums, target, leftP, rightP)
 }
 
 func main() {
@@ -191,41 +151,7 @@ func main() {
 	fmt.Println(searchRange([]int{8, 8}, 8))              // [0, 1]
 	fmt.Println(searchRange([]int{}, 0))                  // [-1, -1]
 	fmt.Println(searchRange([]int{5, 7, 7, 8, 8, 10}, 5)) // [0, 0]
-	// fmt.Println(searchRange([]int{1}, 0))                 // [0, 0]
+	fmt.Println(searchRange([]int{1}, 0))                 // [-1, -1]
+	fmt.Println(searchRange([]int{1}, 1))                 // [0, 0]
+	fmt.Println(searchRange([]int{1, 4}, 4))              // [1, 1]
 }
-
-/*
-mainFunction {
-  [5, 7, 7, 8, 10]
-
-  // Arguments passed are slice and left and right boundaries
-  leftindex = leftSearch([5, 7, 7, 8, 10], left = 0, right = len(slice)-1)
-  rightindex = rightSearch([5, 7, 7, 8, 10], left = 0, right = len(slice)-1)
-
-  return []int{leftindex, rightindex}
-}
-
-leftSearch() {
-  baseCase:
-    - mid is equal to target AND value to the left is lesser
-
-  // You either go left or right, with a preference for left
-  if mid < target {
-    left = mid + 1
-  } else {
-    right = mid
-  }
-}
-
-rightSearch() {
-  baseCase:
-    - mid is equal to target AND value to the right greater
-
-  // You either go left or right, with a preference for left
-  if mid > target {
-    right = mid - 1
-  } else {
-    left = mid
-  }
-}
-*/
