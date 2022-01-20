@@ -40,7 +40,7 @@ Mental Model
   - iterate through the array backwards
   - check if an element at a position can reach the end within 1..val number of jumps
   - N, number of elements in the slice + sum of the values in the array
-  - O(N) or O(N+S)? (sum of values)
+  - O(N) or O(N+S)
 
 EXAMPLES/TEST CASES
   Normal Cases
@@ -64,9 +64,9 @@ DATA STRUCTURE
 ALGORITHM
   	- create a map (dp)
 	- add the last value from nums into the cache (dp) with a value of true
-  	- outer loop, iterates over every element in nums (backwards)
+  	- outer loop, iterates over every element in nums except the last (moving backwards)
     	- Identify the value at the current index in nums
-    	- inner loop, iterate 1 - value at the current element from nums
+    	- inner loop, iterate from 1 to the value at the current element from nums
       		- if dp has a value for the current index + i
         	- add the key for the current index with a true value
         	- and break
@@ -90,7 +90,7 @@ func canJump(nums []int) bool {
 
 	// Iterate through every element in the array starting from the last up
 	// to the first
-	for i := len(nums) - 1; i >= 0; i-- {
+	for i := len(nums) - 2; i >= 0; i-- {
 		val := nums[i]
 		// Iterate from 1 up to the value of the current element
 		for j := 1; j <= val; j++ {
